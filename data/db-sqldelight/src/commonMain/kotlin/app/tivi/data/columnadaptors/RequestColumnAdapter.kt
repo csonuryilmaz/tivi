@@ -5,11 +5,12 @@ package app.tivi.data.columnadaptors
 
 import app.cash.sqldelight.ColumnAdapter
 import app.tivi.data.models.Request
-import app.tivi.extensions.unsafeLazy
 
 internal object RequestColumnAdapter : ColumnAdapter<Request, String> {
-    private val values by unsafeLazy { Request.values().associateBy(Request::tag) }
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun decode(databaseValue: String): Request {
+        return Request.entries.first { it.tag == databaseValue }
+    }
 
-    override fun decode(databaseValue: String): Request = values.getValue(databaseValue)
     override fun encode(value: Request): String = value.tag
 }
